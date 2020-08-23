@@ -8,13 +8,23 @@ public class CameraController : MonoBehaviour
 
     Vector3 offset;
 
-    void Start()
+    bool foundPlayer = false;
+
+    void FindOffset()
     {
         offset = transform.position - player.transform.position;
+        foundPlayer = true;
+    }
+
+    public void FindPlayer(GameObject playerSelect)
+    {
+        player = playerSelect;
+        FindOffset();
     }
 
     void LateUpdate()
     {
+        if(foundPlayer)
         transform.position = player.transform.position + offset;
     }
 }
