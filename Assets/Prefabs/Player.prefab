@@ -159,6 +159,7 @@ MonoBehaviour:
     type: 3}
   count: 0
   maxCount: 16
+  playersConnected: []
 --- !u!114 &7304782364528233521
 MonoBehaviour:
   m_ObjectHideFlags: 0

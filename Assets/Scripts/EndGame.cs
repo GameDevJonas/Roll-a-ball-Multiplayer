@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class EndGame : NetworkBehaviour
+public class EndGame : MonoBehaviour
 {
     public static bool gameIsOver = false;
     public static bool playersReady = false;

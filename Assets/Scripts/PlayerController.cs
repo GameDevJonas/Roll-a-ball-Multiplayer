@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Mirror;
 using UnityEngine.SceneManagement;
+using UnityEngine.PlayerLoop;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -27,13 +28,12 @@ public class PlayerController : NetworkBehaviour
     public int maxCount;
 
     bool hasWon;
+    bool finishedCountDown;
+    bool countingDown;
     //bool iAmLocal;
     bool playingParticles;
-    bool playersReady;
 
     Rigidbody rb;
-
-    public List<GameObject> playersConnected = new List<GameObject>();
 
     public override void OnStartLocalPlayer()
     {
@@ -48,6 +48,8 @@ public class PlayerController : NetworkBehaviour
         Instantiate(otherStuffToSpawn, transform.position, Quaternion.identity, transform);
         //iAmLocal = GetComponentInParent<ArenaSpawn>().isLocalPlayer;
         hasWon = false;
+        finishedCountDown = false;
+        countingDown = false;
         winText = transform.Find("OtherNececcities(Clone)").transform.Find("Canvas").transform.Find("WinText").GetComponent<TextMeshProUGUI>();
         countText = transform.Find("OtherNececcities(Clone)").transform.Find("Canvas").transform.Find("CountText").GetComponent<TextMeshProUGUI>();
         jumpParticles = transform.Find("OtherNececcities(Clone)").transform.Find("JumpParticles").gameObject;
@@ -59,45 +61,48 @@ public class PlayerController : NetworkBehaviour
         count = 0;
         SetCountText();
         jumpParticles.GetComponentInChildren<ParticleSystem>().Stop();
-        playersConnected.Capacity = 2;
-        playersConnected.Add(gameObject);
+        PlayerChecker.playersConnected.Add(gameObject);
     }
 
     private void Update()
     {
-        if (!hasWon && playersReady)
-        {
-            GetInputs();
-            CheckForGameOver();
-            GroundedCheck();
-            CheckForJumpParticles();
-        }
-
-        if (playersConnected.Count < 2)
-        {
-            CheckForPlayers();
-        }
-        //FIKS DETTE
-        if (!playersReady)
+        if (!PlayerChecker.playersReady)
         {
             winText.gameObject.SetActive(true);
             winText.text = "Waiting for other player";
         }
-        else if (playersReady)
+        else if (PlayerChecker.playersReady)
         {
-            winText.gameObject.SetActive(false);
+            if (!countingDown)
+            {
+                winText.gameObject.SetActive(true);
+                StartCoroutine(CountDown());
+            }
+            if (!hasWon && finishedCountDown)
+            {
+                winText.gameObject.SetActive(false);
+                GetInputs();
+                CheckForGameOver();
+                GroundedCheck();
+                CheckForJumpParticles();
+            }
         }
     }
 
-    void CheckForPlayers()
+    IEnumerator CountDown()
     {
-        if ((playersConnected[0] == playersConnected[1]) || playersConnected[1] == null)
-        {
-            playersReady = false;
-            playersConnected.Add(GameObject.FindGameObjectWithTag("Player"));
-        }
-        else
-            playersReady = true;
+        countingDown = true;
+        winText.text = "3";
+        yield return new WaitForSeconds(1f);
+        winText.text = "2";
+        yield return new WaitForSeconds(1f);
+        winText.text = "1";
+        yield return new WaitForSeconds(1f);
+        winText.text = "GO!";
+        yield return new WaitForSeconds(1f);
+        finishedCountDown = true;
+        StopCoroutine(CountDown());
+        yield return null;
     }
 
     void CheckForGameOver()
@@ -151,7 +156,7 @@ public class PlayerController : NetworkBehaviour
     void FixedUpdate()
     {
         Vector3 movement = new Vector3(moveHorizontal, 0f, moveVertical);
-        if (!hasWon && EndGame.playersReady)
+        if (!hasWon && PlayerChecker.playersReady)
         {
             rb.AddForce(movement * speed);
         }
