@@ -5,6 +5,7 @@ using TMPro;
 using Mirror;
 using UnityEngine.SceneManagement;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UI;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -20,6 +21,8 @@ public class PlayerController : NetworkBehaviour
 
     public GameObject jumpParticles;
     public GameObject otherStuffToSpawn;
+    public GameObject namePicker; //
+    public GameObject nameView; //
 
     public int count;
     public int maxCount;
@@ -32,6 +35,10 @@ public class PlayerController : NetworkBehaviour
     bool countingDown;
     //bool iAmLocal;
     bool playingParticles;
+    bool pickingName;
+
+    [SyncVar]
+    public string myName;
 
     Rigidbody rb;
 
@@ -41,11 +48,19 @@ public class PlayerController : NetworkBehaviour
         Camera.main.transform.localPosition = new Vector3(-1, 10, -20);
         Camera.main.transform.SetParent(null);
         Camera.main.GetComponent<CameraController>().FindPlayer(gameObject);
+        //namePicker = Camera.main.transform.Find("MyName").gameObject;
+        //namePicker.SetActive(true); //
+        //namePicker.GetComponentInChildren<Button>().onClick.AddListener(PickedName);
+
     }
 
     void Start()
     {
         Instantiate(otherStuffToSpawn, transform.position, Quaternion.identity, transform);
+        nameView = transform.Find("OtherNececcities(Clone)").transform.Find("NameView").gameObject;
+        nameView.transform.parent = null;
+        ChooseName();
+        //pickingName = true; //
         //iAmLocal = GetComponentInParent<ArenaSpawn>().isLocalPlayer;
         hasWon = false;
         finishedCountDown = false;
@@ -62,6 +77,17 @@ public class PlayerController : NetworkBehaviour
         SetCountText();
         jumpParticles.GetComponentInChildren<ParticleSystem>().Stop();
         PlayerChecker.playersConnected.Add(gameObject);
+    }
+
+    [Command]
+    public void ChooseName()
+    {
+        
+        
+            myName = FindObjectOfType<NamePicker>().myName;
+            nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
+            gameObject.name = myName;
+        
     }
 
     private void Update()
@@ -87,7 +113,21 @@ public class PlayerController : NetworkBehaviour
                 CheckForJumpParticles();
             }
         }
+
+        nameView.transform.position = transform.position;
     }
+
+    /*public void PickedName() //
+    {
+        Debug.Log("Picked name", gameObject);
+        myName = namePicker.GetComponentInChildren<TMP_InputField>().text;
+        nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
+        gameObject.name = myName;
+        //FindObjectOfType<PlayerChecker>().AddPlayerName(myName);
+        PlayerChecker.playerNames.Add(myName);
+        namePicker.SetActive(false);
+        pickingName = false;
+    }*/
 
     IEnumerator CountDown()
     {
