@@ -14,7 +14,7 @@ public class PlayerController : NetworkBehaviour
 
     public bool onJumppad;
 
-    public LayerMask whatNotToHit;
+    public LayerMask whatToHit;
 
     public TextMeshProUGUI countText, winText;
 
@@ -131,7 +131,7 @@ public class PlayerController : NetworkBehaviour
 
     void GroundedCheck()
     {
-        onJumppad = Physics.Raycast(transform.position, Vector3.down, groundRayLength, whatNotToHit);
+        onJumppad = Physics.Raycast(transform.position, Vector3.down, groundRayLength, whatToHit);
         //Debug.DrawRay(transform.position, Vector3.down, Color.red, groundRayLength);
     }
 
