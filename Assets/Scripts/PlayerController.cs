@@ -21,11 +21,11 @@ public class PlayerController : NetworkBehaviour
     public GameObject jumpParticles;
     public GameObject otherStuffToSpawn;
 
-    float moveHorizontal;
-    float moveVertical;
-
     public int count;
     public int maxCount;
+
+    float moveHorizontal;
+    float moveVertical;
 
     bool hasWon;
     bool finishedCountDown;
