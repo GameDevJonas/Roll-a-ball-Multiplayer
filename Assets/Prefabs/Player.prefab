@@ -149,21 +149,30 @@ MonoBehaviour:
   speed: 10
   jumpForce: 300
   groundRayLength: 0.5
+  timer: 0
   onJumppad: 0
-  whatToHit:
+  onGoal: 0
+  jumpPadLayer:
     serializedVersion: 2
     m_Bits: 256
+  goalLayer:
+    serializedVersion: 2
+    m_Bits: 1024
   countText: {fileID: 0}
   winText: {fileID: 0}
+  timerText: {fileID: 0}
   jumpParticles: {fileID: 0}
   otherStuffToSpawn: {fileID: 7492716130584334074, guid: 863b88844ca81724e99b5680b4555dc7,
     type: 3}
-  namePicker: {fileID: 8356663831508003728}
   nameView: {fileID: 0}
   count: 0
   maxCount: 16
-  pickingName: 1
-  myName: 
+  playerOneMat: {fileID: 2100000, guid: b5fe777a9f049c348ab9e890804de9e1, type: 2}
+  playerTwoMat: {fileID: 2100000, guid: b714a6ac330f83f4084cb3e164ff6640, type: 2}
+  playerName: 
+  playerOneName: Jonas
+  playerTwoName: Simon
+  usernameInput: {fileID: 0}
 --- !u!114 &7304782364528233521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,14 +362,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: MyName
       objectReference: {fileID: 0}
+    - target: {fileID: 2536342626842133725, guid: 2cab2ce2da308e24494007252f104a38,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2cab2ce2da308e24494007252f104a38, type: 3}
---- !u!1 &8356663831508003728 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2536342626842133725, guid: 2cab2ce2da308e24494007252f104a38,
-    type: 3}
-  m_PrefabInstance: {fileID: 5821521908058353485}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8356663831508003735 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2536342626842133722, guid: 2cab2ce2da308e24494007252f104a38,
@@ -373,7 +381,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 5821521908058353485}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8356663831508003728}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac5f18ec3325c204fa6e17c63060f474, type: 3}

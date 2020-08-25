@@ -229,6 +229,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8158958460354899920, guid: 4263c69ae0f48684faf8150d9b93fe85,
         type: 3}
+    - target: {fileID: 6875186184252943352, guid: b1ecd7f9bbf08cb4fb4533cc39e9bc0a,
+        type: 3}
+      propertyPath: autoCreatePlayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6875186184252943353, guid: b1ecd7f9bbf08cb4fb4533cc39e9bc0a,
         type: 3}
       propertyPath: m_LocalPosition.x
