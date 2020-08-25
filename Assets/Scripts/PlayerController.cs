@@ -5,24 +5,33 @@ using TMPro;
 using Mirror;
 using UnityEngine.SceneManagement;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UI;
+using System;
+using UnityEngine.Events;
 
 public class PlayerController : NetworkBehaviour
 {
     public float speed;
     public float jumpForce;
     public float groundRayLength;
+    public float timer;
 
-    public bool onJumppad;
+    public bool onJumppad, onGoal;
 
-    public LayerMask whatToHit;
+    public LayerMask jumpPadLayer;
+    public LayerMask goalLayer;
 
-    public TextMeshProUGUI countText, winText;
+    public TextMeshProUGUI countText, winText, timerText;
 
     public GameObject jumpParticles;
     public GameObject otherStuffToSpawn;
+    //public GameObject namePicker; //
+    public GameObject nameView; //
 
     public int count;
     public int maxCount;
+
+    public Material playerOneMat, playerTwoMat;
 
     float moveHorizontal;
     float moveVertical;
@@ -33,7 +42,16 @@ public class PlayerController : NetworkBehaviour
     //bool iAmLocal;
     bool playingParticles;
 
+    //[SyncVar]
+    //public bool pickingName;
+
+    [SyncVar]
+    public string playerName;
+    public string playerOneName, playerTwoName;
+
     Rigidbody rb;
+
+    public TMP_InputField usernameInput;
 
     public override void OnStartLocalPlayer()
     {
@@ -41,17 +59,36 @@ public class PlayerController : NetworkBehaviour
         Camera.main.transform.localPosition = new Vector3(-1, 10, -20);
         Camera.main.transform.SetParent(null);
         Camera.main.GetComponent<CameraController>().FindPlayer(gameObject);
+        //namePicker = Camera.main.transform.Find("MyName").gameObject;
+        //namePicker.SetActive(true); //
+        //namePicker.GetComponentInChildren<Button>().onClick.AddListener(PickedName);
+
     }
 
     void Start()
     {
+        timer = 0;
         Instantiate(otherStuffToSpawn, transform.position, Quaternion.identity, transform);
+        nameView = transform.Find("OtherNececcities(Clone)").transform.Find("NameView").gameObject;
+        nameView.transform.parent = null;
+        //namePicker.SetActive(false);
+        //if (isLocalPlayer)
+        //{
+        //    namePicker.SetActive(true);
+        //}
+        //if (isLocalPlayer)
+        //{
+        //    ChooseName();
+        //}
+        //pickingName = true; //
         //iAmLocal = GetComponentInParent<ArenaSpawn>().isLocalPlayer;
         hasWon = false;
         finishedCountDown = false;
         countingDown = false;
         winText = transform.Find("OtherNececcities(Clone)").transform.Find("Canvas").transform.Find("WinText").GetComponent<TextMeshProUGUI>();
         countText = transform.Find("OtherNececcities(Clone)").transform.Find("Canvas").transform.Find("CountText").GetComponent<TextMeshProUGUI>();
+        timerText = transform.Find("OtherNececcities(Clone)").transform.Find("Canvas").transform.Find("Timer").GetComponent<TextMeshProUGUI>();
+        usernameInput = transform.Find("OtherNececcities(Clone)").transform.Find("Canvas").transform.Find("UsernameInput").GetComponent<TMP_InputField>();
         jumpParticles = transform.Find("OtherNececcities(Clone)").transform.Find("JumpParticles").gameObject;
         jumpParticles.transform.SetParent(null);
         winText.gameObject.SetActive(false);
@@ -62,10 +99,81 @@ public class PlayerController : NetworkBehaviour
         SetCountText();
         jumpParticles.GetComponentInChildren<ParticleSystem>().Stop();
         PlayerChecker.playersConnected.Add(gameObject);
+        if (FindObjectOfType<PlayerChecker>().playersConCheck.Count == 1)
+        {
+            GetComponent<MeshRenderer>().material = playerOneMat;
+            usernameInput.text = playerOneName;
+            playerName = playerOneName;
+        }
+        else
+        {
+            GetComponent<MeshRenderer>().material = playerTwoMat;
+            usernameInput.text = playerTwoName;
+            playerName = playerTwoName;
+        }
+        nameView.GetComponentInChildren<TextMeshProUGUI>().text = playerName;
     }
+
+    [Command]
+    public void NameChange(string newName)
+    {
+        playerName = newName;
+    }
+
+    //public void ChooseName()
+    //{
+    //    PushNameOnClient();
+    //    PushNameOnServer();
+    //    //if (!isServer)
+    //    //{
+    //    //    PushNameOnClient();
+    //    //}
+    //    //else
+    //    //{
+    //    //    PushNameOnServer();
+    //    //}
+    //    /*if (!hasAuthority)
+    //    {
+    //        PushNameOnClient();
+    //    }
+    //    else
+    //    {
+    //        PushNameOnServer();
+    //    }*/
+    //    namePicker.SetActive(false);
+    //}
+
+    //[Command]
+    //public void PushNameOnClient()
+    //{
+    //    myName = namePicker.GetComponent<NamePicker>().myName;
+    //    //nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
+    //    //gameObject.name = myName;
+    //    pickingName = false;
+    //    Debug.Log("Pushed " + myName + " from client", gameObject);
+    //}
+
+    //public void PushNameOnServer()
+    //{
+    //    //myName = namePicker.GetComponent<NamePicker>().myName;
+    //    nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
+    //    gameObject.name = myName;
+    //    pickingName = false;
+    //    Debug.Log("Pushed " + myName + " from server", gameObject);
+    //}
 
     private void Update()
     {
+        if(playerName != usernameInput.text)
+        {
+            NameChange(usernameInput.text);
+            nameView.GetComponentInChildren<TextMeshProUGUI>().text = playerName;
+            if (isLocalPlayer)
+            {
+                NameChange(usernameInput.text);
+            }
+            //playerName = usernameInput.text;
+        }
         if (!PlayerChecker.playersReady)
         {
             winText.gameObject.SetActive(true);
@@ -76,6 +184,7 @@ public class PlayerController : NetworkBehaviour
             if (!countingDown)
             {
                 winText.gameObject.SetActive(true);
+                //PushNameOnServer();
                 StartCoroutine(CountDown());
             }
             if (!hasWon && finishedCountDown)
@@ -85,9 +194,24 @@ public class PlayerController : NetworkBehaviour
                 CheckForGameOver();
                 GroundedCheck();
                 CheckForJumpParticles();
+                CheckForGoal();
+                TimerFunc();
             }
         }
+        nameView.transform.position = transform.position;
     }
+
+    /*public void PickedName() //
+    {
+        Debug.Log("Picked name", gameObject);
+        myName = namePicker.GetComponentInChildren<TMP_InputField>().text;
+        nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
+        gameObject.name = myName;
+        //FindObjectOfType<PlayerChecker>().AddPlayerName(myName);
+        PlayerChecker.playerNames.Add(myName);
+        namePicker.SetActive(false);
+        pickingName = false;
+    }*/
 
     IEnumerator CountDown()
     {
@@ -103,6 +227,12 @@ public class PlayerController : NetworkBehaviour
         finishedCountDown = true;
         StopCoroutine(CountDown());
         yield return null;
+    }
+
+    public void TimerFunc()
+    {
+        timer += Time.deltaTime;
+        timerText.text = Convert.ToString(Convert.ToInt32(timer));
     }
 
     void CheckForGameOver()
@@ -131,7 +261,8 @@ public class PlayerController : NetworkBehaviour
 
     void GroundedCheck()
     {
-        onJumppad = Physics.Raycast(transform.position, Vector3.down, groundRayLength, whatToHit);
+        onJumppad = Physics.Raycast(transform.position, Vector3.down, groundRayLength, jumpPadLayer);
+        onGoal = Physics.Raycast(transform.position, Vector3.down, groundRayLength, goalLayer);
         //Debug.DrawRay(transform.position, Vector3.down, Color.red, groundRayLength);
     }
 
@@ -151,6 +282,24 @@ public class PlayerController : NetworkBehaviour
             jumpParticles.GetComponentInChildren<ParticleSystem>().Stop();
             playingParticles = false;
         }
+    }
+
+    void CheckForGoal()
+    {
+        if (onGoal)
+        {
+            EndTheGame();
+        }
+    }
+
+    void EndTheGame()
+    {
+        hasWon = true;
+        FindObjectOfType<EndGame>().GameOver();
+        //countText.gameObject.SetActive(false);
+        winText.gameObject.SetActive(true);
+        winText.text = "You won with time: " + timerText.text;
+        Invoke("QuitGame", 2f);
     }
 
     void FixedUpdate()
@@ -182,12 +331,7 @@ public class PlayerController : NetworkBehaviour
         countText.text = "Count: " + count;
         if (count >= maxCount)
         {
-            hasWon = true;
-            FindObjectOfType<EndGame>().GameOver();
-            countText.gameObject.SetActive(false);
-            winText.gameObject.SetActive(true);
-            winText.text = "You won!";
-            Invoke("QuitGame", 2f);
+            countText.text = "Count: max!";
         }
     }
 
