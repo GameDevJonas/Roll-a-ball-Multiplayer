@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.SceneManagement;
 
 public class EndGame : MonoBehaviour
 {
@@ -21,6 +22,12 @@ public class EndGame : MonoBehaviour
         }
         else
         {
+            playersReady = false;
+        }
+
+        if(SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            gameIsOver = false;
             playersReady = false;
         }
     }

@@ -53,12 +53,15 @@ public class PlayerController : NetworkBehaviour
 
     public TMP_InputField usernameInput;
 
+    Vector3 spawnPoint;
+
     public override void OnStartLocalPlayer()
     {
         Camera.main.transform.SetParent(transform);
-        Camera.main.transform.localPosition = new Vector3(-1, 10, -20);
+        Camera.main.transform.localPosition = new Vector3(-1, 10, -14);
         Camera.main.transform.SetParent(null);
         Camera.main.GetComponent<CameraController>().FindPlayer(gameObject);
+        spawnPoint = transform.position;
         //namePicker = Camera.main.transform.Find("MyName").gameObject;
         //namePicker.SetActive(true); //
         //namePicker.GetComponentInChildren<Button>().onClick.AddListener(PickedName);
@@ -232,7 +235,7 @@ public class PlayerController : NetworkBehaviour
     public void TimerFunc()
     {
         timer += Time.deltaTime;
-        timerText.text = Convert.ToString(Convert.ToInt32(timer));
+        timerText.text = Convert.ToString(System.Math.Round(timer, 2));
     }
 
     void CheckForGameOver()
@@ -323,6 +326,12 @@ public class PlayerController : NetworkBehaviour
             count++;
             SetCountText();
             other.gameObject.SetActive(false);
+        }
+
+        if (other.CompareTag("ChatWindow"))
+        {
+            transform.position = spawnPoint;
+            rb.velocity = new Vector3(0, 0, 0);
         }
     }
 
