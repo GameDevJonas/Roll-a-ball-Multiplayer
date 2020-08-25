@@ -4,9 +4,11 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Mirror;
 
-public class NamePicker : MonoBehaviour
+public class NamePicker : NetworkBehaviour
 {
+    [SyncVar]
     public string myName;
 
     public GameObject whatToDisable;
@@ -19,22 +21,35 @@ public class NamePicker : MonoBehaviour
         //{
         //    gameObject.SetActive(false);
         //}
-        DontDestroyOnLoad(this);
+        //DontDestroyOnLoad(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!loadedSceneTwo && SceneManager.GetActiveScene().buildIndex == 1)
-        {
-            PlayerChecker.playerNames.Add(myName);
-            loadedSceneTwo = true;
-        }
+        //if (!loadedSceneTwo && SceneManager.GetActiveScene().buildIndex == 1)
+        //{
+        //    //Invoke("SyncNames", 1f);
+        //    PlayerChecker.playerNames.Add(myName);
+        //    Debug.Log("Added " + myName + " to list");
+        //    loadedSceneTwo = true;
+        //}
     }
 
+    [Command]
+    public void SyncNames()
+    {
+        PlayerChecker.playerNames.Add(myName);
+    }
+
+    
     public void OnDonePress()
     {
         myName = GetComponentInChildren<TMP_InputField>().text;
-        whatToDisable.SetActive(false);
+        Debug.Log("Added " + myName + " to list");
+        PlayerChecker.playerNames.Add(myName);
+        PlayerController player = GetComponentInParent<PlayerController>();
+        player.ChooseName();
+        //whatToDisable.SetActive(false);
     }
 }

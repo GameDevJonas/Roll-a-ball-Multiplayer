@@ -35,7 +35,9 @@ public class PlayerController : NetworkBehaviour
     bool countingDown;
     //bool iAmLocal;
     bool playingParticles;
-    bool pickingName;
+
+    [SyncVar]
+    public bool pickingName;
 
     [SyncVar]
     public string myName;
@@ -56,10 +58,22 @@ public class PlayerController : NetworkBehaviour
 
     void Start()
     {
+        if (isLocalPlayer)
+        {
+            pickingName = true;
+        }
         Instantiate(otherStuffToSpawn, transform.position, Quaternion.identity, transform);
         nameView = transform.Find("OtherNececcities(Clone)").transform.Find("NameView").gameObject;
         nameView.transform.parent = null;
-        ChooseName();
+        namePicker.SetActive(false);
+        if (isLocalPlayer)
+        {
+            namePicker.SetActive(true);
+        }
+        //if (isLocalPlayer)
+        //{
+        //    ChooseName();
+        //}
         //pickingName = true; //
         //iAmLocal = GetComponentInParent<ArenaSpawn>().isLocalPlayer;
         hasWon = false;
@@ -79,15 +93,39 @@ public class PlayerController : NetworkBehaviour
         PlayerChecker.playersConnected.Add(gameObject);
     }
 
-    [Command]
+
     public void ChooseName()
     {
-        
-        
-            myName = FindObjectOfType<NamePicker>().myName;
-            nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
-            gameObject.name = myName;
-        
+        PushNameOnServer();
+        PushNameOnClient();
+        /*if (!hasAuthority)
+        {
+            PushNameOnClient();
+        }
+        else
+        {
+            PushNameOnServer();
+        }*/
+        namePicker.SetActive(false);
+    }
+
+    [Command]
+    public void PushNameOnClient()
+    {
+        Debug.Log("Pushed " + myName + " from client", gameObject);
+        myName = namePicker.GetComponent<NamePicker>().myName;
+        nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
+        gameObject.name = myName;
+        pickingName = false;
+    }
+
+    public void PushNameOnServer()
+    {
+        Debug.Log("Pushed " + myName + " from server", gameObject);
+        myName = namePicker.GetComponent<NamePicker>().myName;
+        nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
+        gameObject.name = myName;
+        pickingName = false;
     }
 
     private void Update()
@@ -102,6 +140,7 @@ public class PlayerController : NetworkBehaviour
             if (!countingDown)
             {
                 winText.gameObject.SetActive(true);
+                //PushNameOnServer();
                 StartCoroutine(CountDown());
             }
             if (!hasWon && finishedCountDown)

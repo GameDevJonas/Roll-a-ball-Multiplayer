@@ -256,9 +256,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PlayerTesting, Assembly-CSharp
-        m_MethodName: PickedName
+      - m_Target: {fileID: 1179490128}
+        m_TargetAssemblyTypeName: NamePicker, Assembly-CSharp
+        m_MethodName: OnDonePress
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -601,6 +601,8 @@ GameObject:
   - component: {fileID: 2536342626842133721}
   - component: {fileID: 2536342626842133720}
   - component: {fileID: 2536342626842133723}
+  - component: {fileID: 1179490128}
+  - component: {fileID: 1179490133}
   m_Layer: 0
   m_Name: MyName
   m_TagString: Untagged
@@ -688,6 +690,38 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1179490128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2536342626842133725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac5f18ec3325c204fa6e17c63060f474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  myName: 
+  whatToDisable: {fileID: 2536342626287106050}
+--- !u!114 &1179490133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2536342626842133725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  m_AssetId: 
+  hasSpawned: 0
 --- !u!1 &2536342627006582377
 GameObject:
   m_ObjectHideFlags: 0

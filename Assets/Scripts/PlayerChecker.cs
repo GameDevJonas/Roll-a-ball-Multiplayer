@@ -49,9 +49,9 @@ public class PlayerChecker : MonoBehaviour
                 playersConnected.RemoveAt(1);
                 playersConnected.Add(GameObject.FindGameObjectWithTag("Player"));
             }*/
-            else
+            else if(!playersConnected[0].GetComponent<PlayerController>().pickingName && !playersConnected[1].GetComponent<PlayerController>().pickingName)
             {
-                playerNames.Add(playersConnected[1].GetComponent<PlayerController>().myName);
+                //playerNames.Add(playersConnected[1].GetComponent<PlayerController>().myName);
                 playersReady = true;
             }
         }
