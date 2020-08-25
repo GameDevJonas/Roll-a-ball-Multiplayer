@@ -1594,7 +1594,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1832317788
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2469,7 +2469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 2710357450
   serverOnly: 1
-  m_AssetId: 2cab2ce2da308e24494007252f104a38
+  m_AssetId: 
   hasSpawned: 0
 --- !u!114 &2536342627534512342
 MonoBehaviour:
@@ -2608,6 +2608,11 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1249363194}
+    - target: {fileID: 4675747361828938086, guid: 34d3b66309202504a876bf93b38e294e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4675747361828938087, guid: 34d3b66309202504a876bf93b38e294e,
         type: 3}
       propertyPath: m_RootOrder

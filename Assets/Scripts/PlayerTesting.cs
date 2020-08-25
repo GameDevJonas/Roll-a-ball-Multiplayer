@@ -13,8 +13,8 @@ public class PlayerTesting : MonoBehaviour
     public float jumpForce;
 
     public GameObject jumpParticles;
-    public GameObject namePicker; //
-    public GameObject nameView; //
+    //public GameObject namePicker; //
+    //public GameObject nameView; //
 
     public TextMeshProUGUI countText;
 
@@ -28,14 +28,11 @@ public class PlayerTesting : MonoBehaviour
     bool onJumppad;
     bool playingParticles;
     bool hasWon;
-    bool pickingName; //
 
     int count;
 
     void Start()
     {
-        pickingName = true; //
-        namePicker.SetActive(true); //
         Camera.main.transform.SetParent(transform);
         Camera.main.transform.localPosition = new Vector3(-1, 10, -20);
         Camera.main.transform.SetParent(null);
@@ -50,22 +47,11 @@ public class PlayerTesting : MonoBehaviour
 
     void Update()
     {
-        if (!pickingName)
-        {
-            GetInputs();
-            GroundedCheck();
-            CheckForJumpParticles();
-        }
-        nameView.transform.position = transform.position; //
+        GetInputs();
+        GroundedCheck();
+        CheckForJumpParticles();
     }
 
-    public void PickedName() //
-    {
-        myName = namePicker.GetComponentInChildren<TMP_InputField>().text;
-        nameView.GetComponentInChildren<TextMeshProUGUI>().text = myName;
-        namePicker.SetActive(false);
-        pickingName = false;
-    }
 
     void GetInputs()
     {
